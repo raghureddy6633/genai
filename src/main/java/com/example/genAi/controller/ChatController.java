@@ -1,26 +1,24 @@
 package com.example.genAi.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/chat/ollama")
 public class ChatController {
 
-    private ChatClient chatClient;
+    private final ChatClient chatClient;
 
-    public ChatController(ChatClient chatClient) {
-        this.chatClient = chatClient;
+    public ChatController(OllamaChatModel chatClient) {
+        this.chatClient = ChatClient.create(chatClient);
     }
 
-    @PostMapping(path = "/query")
-    public ResponseEntity<String> searchyourQuery(@RequestParam(name = "req") String req){
+    @GetMapping(path = "/{query}")
+    public ResponseEntity<String> searchYourQuery(@PathVariable String query){
 
-        String response = chatClient.prompt(req).call().content();
+        String response = chatClient.prompt(query).call().content();
         return  ResponseEntity.ok(response);
     }
 }
